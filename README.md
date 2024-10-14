@@ -1,8 +1,9 @@
-# A Fibonacci service
+# A Fibonacci Number Service
 
 ## Comments
 
 Calcul vectoriel pour le process en go which is the fastest model to compute it because it is the only approch offering a O(log n), other approches: reccursive O(2^n) or memoization O(n)
+"Fast doubling" is an algorithm know to be faster but lack of documentation and mostly acknowledging it too late once development was done.
 
 Use go for speed and enabeling secure and lightweight package thanks to static build. No lib nor bin available in image from scratch limiting surface attack.
 This needs to be set for production purpose - to fix an abuse limit.
@@ -21,6 +22,18 @@ Could have done network policies with this Ingress only on port 8000
 
 Container runs on gvisor for limiting node disaster if container hijacked.
 
+Algorithm in lib/fibonacci has been optimize using the benchmark.sh which time requests. The algorithm tested mainly 2 libraries to handle bignumbers GMP and math/big. Benchmark showed that math/big was a little better and luckily is "go native" library. The implementation was improved with help of chatGPT.
+
+Network policies to avoid reaching other endpoints if pod has been hijacked, also preventing spamming other services
+
+Deployment in readonlyrootfilesystem, runAs 1000, with gVisor used.
+
+Use Trivy as static analysis to prevent a deployment with known security issues.
+
+Sources:
+https://robwilsondev.medium.com/bigo-and-beyond-how-to-compute-fibonacci-sequence-efficiently-with-matrix-exponentiation-d9924545fe54
+https://www.nayuki.io/page/fast-fibonacci-algorithms
+https://www.calculatorsoup.com/calculators/discretemathematics/fibonacci-calculator.php - for verification
 
 ## Try it with Docker
 docker build --tag fibonacci:0 .
