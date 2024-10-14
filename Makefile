@@ -9,6 +9,9 @@ build:
 run:
 	CGO_ENABLED=0 GOOS=linux $(GO) run -v $(NAME)
 
+test:
+	$(GO) test -v
+
 clean:
 	rm -rf $(NAME)
 
