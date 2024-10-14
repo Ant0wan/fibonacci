@@ -2,24 +2,46 @@ package main
 
 import (
 	"fmt"
+	"log"
+	"math/big"
 	"net/http"
 )
 
 func fibHandler(w http.ResponseWriter, r *http.Request) {
-	number := r.URL.Query().Get("=")
-	fmt.Fprintf(w, number)
-
-	if number != "" {
-		fmt.Fprintf(w, number)
-	} else {
-		http.Error(w, "Missing number in query", http.StatusBadRequest)
+	// Only allow GET requests
+	if r.Method != http.MethodGet {
+		http.Error(w, "Invalid request method", http.StatusMethodNotAllowed)
+		return
 	}
+
+	// Parse the query parameters
+	nStr := r.URL.Query().Get("n")
+	if nStr == "" {
+		http.Error(w, "Missing 'n' parameter", http.StatusBadRequest)
+		return
+	}
+
+	// Use math/big to handle very large integers
+	n := new(big.Int)
+	_, success := n.SetString(nStr, 10) // Parse base-10 string into big.Int
+	if !success {
+		http.Error(w, "Invalid 'n' parameter. It must be a valid number.", http.StatusBadRequest)
+		return
+	}
+	// Estimate the time it will take to compute fibonacci on the number given before computing in order to reject it
+	// If everything is fine, return the value of 'n'
+	fmt.Fprintf(w, "%s", n.String()) // Where fibonacci starts
 }
 
 func main() {
+	// Register the handler for /fib
 	http.HandleFunc("/fib", fibHandler)
 
-	fmt.Println("Server started at :8080")
-	http.ListenAndServe(":8080", nil)
+	// Start the server on port 8000
+	log.Println("Starting server on :8000")
+	err := http.ListenAndServe(":8000", nil)
+	if err != nil {
+		log.Fatalf("Server failed: %s", err)
+	}
 }
 
