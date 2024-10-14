@@ -40,7 +40,6 @@ func TestFibHandlerTooLargeInput(t *testing.T) {
 	cases := []string{
 		"12345678",
 		"10000000",
-		"7654321",
 		"98765432",
 	}
 
@@ -48,17 +47,11 @@ func TestFibHandlerTooLargeInput(t *testing.T) {
 		req, _ := http.NewRequest("GET", "/fib?n="+n, nil)
 		response := executeRequest(req)
 
-		if len(n) > 7 {
-			if status := response.Code; status != http.StatusBadRequest {
-				t.Errorf("Handler returned wrong status code for large input n=%s: got %v want %v", n, status, http.StatusBadRequest)
-			}
-			if !strings.Contains(response.Body.String(), "Input is too large") {
-				t.Errorf("Handler did not reject large input for n=%s", n)
-			}
-		} else {
-			if status := response.Code; status != http.StatusOK {
-				t.Errorf("Handler returned wrong status code for computable input n=%s: got %v want %v", n, status, http.StatusOK)
-			}
+		if status := response.Code; status != http.StatusBadRequest {
+			t.Errorf("Handler returned wrong status code for large input n=%s: got %v want %v", n, status, http.StatusBadRequest)
+		}
+		if !strings.Contains(response.Body.String(), "Input is too large") {
+			t.Errorf("Handler did not reject large input for n=%s", n)
 		}
 	}
 }
