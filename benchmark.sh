@@ -1,13 +1,13 @@
 # Basic cases
-alias time=/usr/bin/time
-time curl 'http://localhost:8000/fib?n=1' 2>>time
-time curl 'http://localhost:8000/fib?n=21' 2>>time
-time curl 'http://localhost:8000/fib?n=321' 2>>time
-time curl 'http://localhost:8000/fib?n=4321' 2>>time
-time curl 'http://localhost:8000/fib?n=54321' 2>>time
-time curl 'http://localhost:8000/fib?n=654321' 2>>time
-time curl 'http://localhost:8000/fib?n=7654321' 2>>time
-time curl 'http://localhost:8000/fib?n=27654321' 2>>time
+> time
+/usr/bin/time curl 'http://localhost:8000/fib?n=1' 2>>time
+/usr/bin/time curl 'http://localhost:8000/fib?n=21' 2>>time
+/usr/bin/time curl 'http://localhost:8000/fib?n=321' 2>>time
+/usr/bin/time curl 'http://localhost:8000/fib?n=4321' 2>>time
+/usr/bin/time curl 'http://localhost:8000/fib?n=54321' 2>>time
+/usr/bin/time curl 'http://localhost:8000/fib?n=654321' 2>>time
+/usr/bin/time curl 'http://localhost:8000/fib?n=7654321' 2>>time
+/usr/bin/time curl 'http://localhost:8000/fib?n=27654321' 2>>time
 
 #curl 'http://localhost:8000/fib?n=222323230983049820347032634926918623872197391273109876543456789876543212345678998776862117639817639186876329187632917863918'
 
