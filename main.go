@@ -10,37 +10,35 @@ import (
 )
 
 func fibHandler(w http.ResponseWriter, r *http.Request) {
-	// Only allow GET requests
 	if r.Method != http.MethodGet {
 		http.Error(w, "Invalid request method", http.StatusMethodNotAllowed)
 		return
 	}
 
-	// Parse the query parameters
 	nStr := r.URL.Query().Get("n")
 	if nStr == "" {
 		http.Error(w, "Missing 'n' parameter", http.StatusBadRequest)
 		return
 	}
 
-	// THis needs to be computed - maybe at start up depending on resource - to fix an abuse limit
-	//if len(nStr) > 1000 {
-    	//	http.Error(w, "Input is too large", http.StatusBadRequest)
-    	//	return
-	//}
+	// This needs to be set for production purpose - to fix an abuse limit.
+	// It could dynamically be set depending on the hardware it runs on.
+	// Comment this for test purposes, if you do not mind wait for compute.
+	// Estimate the time it will take to compute fibonacci on the number given before computing in order to reject it.
+	if len(nStr) > 7 {
+    		http.Error(w, "Input is too large to be computed quickly.", http.StatusBadRequest)
+    		return
+	}
 
-	// Use math/big to handle very large integers
 	n := new(big.Int)
-	_, success := n.SetString(nStr, 10) // Parse base-10 string into big.Int
+	_, success := n.SetString(nStr, 10)
 	if !success {
 		http.Error(w, "Invalid 'n' parameter. It must be a valid number.", http.StatusBadRequest)
 		return
 	}
-	// Estimate the time it will take to compute fibonacci on the number given before computing in order to reject it
 	// If everything is fine, return the value of 'n'
 
-	// Compute the nth Fibonacci number using the fiblib library
-	fib := fiblib.FibonacciMatrix(n)
+	fib := fibonacci.FibonacciMatrix(n)
 
 	// Return the Fibonacci number as a string
 	fmt.Fprintf(w, "%s", fib.String())

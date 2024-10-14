@@ -1,4 +1,4 @@
-package fiblib
+package fibonacci
 
 import (
 	"math/big"
