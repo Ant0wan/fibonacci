@@ -24,11 +24,14 @@ Container runs on gvisor for limiting node disaster if container hijacked.
 
 Algorithm in lib/fibonacci has been optimize using the benchmark.sh which time requests. The algorithm tested mainly 2 libraries to handle bignumbers GMP and math/big. Benchmark showed that math/big was a little better and luckily is "go native" library. The implementation was improved with help of chatGPT.
 
-Network policies to avoid reaching other endpoints if pod has been hijacked, also preventing spamming other services
+Network policies with Ingress only and default-deny for the rest to avoid reaching other endpoints if pod has been hijacked, also preventing spamming other services
 
 Deployment in readonlyrootfilesystem, runAs 1000, with gVisor used.
 
 Use Trivy as static analysis to prevent a deployment with known security issues.
+
+The service is so simple that it is not necessary to use Helm or Kustomize at the moment.
+CI not implemented, build must be manual unfortunatly.
 
 Sources:
 https://robwilsondev.medium.com/bigo-and-beyond-how-to-compute-fibonacci-sequence-efficiently-with-matrix-exponentiation-d9924545fe54
