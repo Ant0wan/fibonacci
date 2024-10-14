@@ -21,6 +21,12 @@ func fibHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// THis needs to be computed - maybe at start up depending on resource - to fix an abuse limit
+	//if len(nStr) > 1000 {
+    	//	http.Error(w, "Input is too large", http.StatusBadRequest)
+    	//	return
+	//}
+
 	// Use math/big to handle very large integers
 	n := new(big.Int)
 	_, success := n.SetString(nStr, 10) // Parse base-10 string into big.Int
