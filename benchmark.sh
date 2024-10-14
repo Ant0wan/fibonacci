@@ -11,15 +11,11 @@ export TIME="%E"
 /usr/bin/time curl -s 'http://localhost:8000/fib?n=27654321' 2>>$1 1>/dev/null
 /usr/bin/time curl -s 'http://localhost:8000/fib?n=112233445' 2>>$1 1>/dev/null
 
-#curl 'http://localhost:8000/fib?n=222323230983049820347032634926918623872197391273109876543456789876543212345678998776862117639817639186876329187632917863918'
-
 # Malformed
 #curl 'http://localhost:8000/fib?n=22232fib?n=99999'
 #curl 'http://localhost:8000/fib?n=%3Cscript%3Ealert(1)%3C/script%3E'
 
 # Big numbers
-
-
 
 # Spamming
 #while true; do curl 'http://localhost:8000/fib?n=notanumber'; done
