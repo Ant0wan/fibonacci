@@ -5,6 +5,8 @@ import (
 	"log"
 	"math/big"
 	"net/http"
+
+	"fibonacci/lib"
 )
 
 func fibHandler(w http.ResponseWriter, r *http.Request) {
@@ -36,7 +38,12 @@ func fibHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	// Estimate the time it will take to compute fibonacci on the number given before computing in order to reject it
 	// If everything is fine, return the value of 'n'
-	fmt.Fprintf(w, "%s", n.String()) // Where fibonacci starts
+
+	// Compute the nth Fibonacci number using the fiblib library
+	fib := fiblib.FibonacciMatrix(n)
+
+	// Return the Fibonacci number as a string
+	fmt.Fprintf(w, "%s", fib.String())
 }
 
 func main() {
