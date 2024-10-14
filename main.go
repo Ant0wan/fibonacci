@@ -36,19 +36,15 @@ func fibHandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Invalid 'n' parameter. It must be a valid number.", http.StatusBadRequest)
 		return
 	}
-	// If everything is fine, return the value of 'n'
 
 	fib := fibonacci.FibonacciMatrix(n)
 
-	// Return the Fibonacci number as a string
 	fmt.Fprintf(w, "%s", fib.String())
 }
 
 func main() {
-	// Register the handler for /fib
 	http.HandleFunc("/fib", fibHandler)
 
-	// Start the server on port 8000
 	log.Println("Starting server on :8000")
 	err := http.ListenAndServe(":8000", nil)
 	if err != nil {
