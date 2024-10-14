@@ -5,7 +5,7 @@ import (
 	"log"
 	"math/big"
 	"net/http"
-	"os" // Import the os package to read environment variables
+	"os"
 
 	"fibonacci/lib"
 )
@@ -22,19 +22,14 @@ func fibHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// This needs to be set for production purpose - to fix an abuse limit.
-	// It could dynamically be set depending on the hardware it runs on.
-	// Comment this for test purposes, if you do not mind wait for compute.
-	// Estimate the time it will take to compute fibonacci on the number given before computing in order to reject it.
-	if len(nStr) > 7 {
-		http.Error(w, "Input is too large to be computed quickly.", http.StatusBadRequest)
+	n := new(big.Int)
+	if _, success := n.SetString(nStr, 10); !success {
+		http.Error(w, "Invalid 'n' parameter. It must be a valid number.", http.StatusBadRequest)
 		return
 	}
 
-	n := new(big.Int)
-	_, success := n.SetString(nStr, 10)
-	if !success {
-		http.Error(w, "Invalid 'n' parameter. It must be a valid number.", http.StatusBadRequest)
+	if len(nStr) > 7 {
+		http.Error(w, "Input is too large to be computed quickly.", http.StatusBadRequest)
 		return
 	}
 
@@ -57,3 +52,4 @@ func main() {
 		log.Fatalf("Server failed: %s", err)
 	}
 }
+
