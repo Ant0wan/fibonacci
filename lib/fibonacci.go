@@ -100,4 +100,3 @@ func FibonacciMatrix(n *big.Int) *big.Int {
 
 	return resultMatrix.a
 }
-
