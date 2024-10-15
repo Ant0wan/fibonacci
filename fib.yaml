@@ -70,3 +70,18 @@ spec:
     kind: Deployment
     name: fibonacci
   targetCPUUtilizationPercentage: 50
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: fibonacci
+  name: fibonacci
+spec:
+  ports:
+  - port: 80
+    protocol: TCP
+    targetPort: 8000
+  selector:
+    app: fibonacci
+  type: LoadBalancer
