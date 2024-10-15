@@ -55,5 +55,5 @@ spec:
   - {}
   ingress:
   - ports:
-    - protocols: TCP
+    - protocol: TCP
       port: 8000
