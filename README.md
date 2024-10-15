@@ -33,6 +33,8 @@ Use Trivy as static analysis to prevent a deployment with known security issues.
 The service is so simple that it is not necessary to use Helm or Kustomize at the moment.
 CI not implemented, build must be manual unfortunatly.
 
+The use of HPA requires Metrics Server in order to work properly.
+
 Documentation and comments in code written with help of chatGPT.
 
 Sources:
