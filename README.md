@@ -22,7 +22,7 @@ Could have done network policies with this Ingress only on port 8000
 
 Container runs on gvisor for limiting node disaster if container hijacked.
 
-Algorithm in lib/fibonacci has been optimize using the benchmark.sh which time requests. The algorithm tested mainly 2 libraries to handle bignumbers GMP and math/big. Benchmark showed that math/big was a little better and luckily is "go native" library. The implementation was improved with help of chatGPT.
+Algorithm in lib/fibonacci has been optimize using the benchmark.sh which time requests. The algorithm tested mainly 2 libraries to handle bignumbers GMP (gmp.log) and math/big (big.log). Benchmark showed that math/big was a little better and luckily is "go native" library. The implementation was improved with help of chatGPT.
 
 Network policies with Ingress only and default-deny for the rest to avoid reaching other endpoints if pod has been hijacked, also preventing spamming other services
 
@@ -44,6 +44,8 @@ https://www.calculatorsoup.com/calculators/discretemathematics/fibonacci-calcula
 
 ## Try it with Docker
 docker build --tag fibonacci:0 .
+
+trivy image fibonacci:0
 
 docker run --interactive --tty --publish 8000:8000 fibonacci:0
 
