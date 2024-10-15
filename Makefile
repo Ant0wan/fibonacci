@@ -17,4 +17,4 @@ clean:
 
 fclean: clean
 
-.PHONY: all build  clean fclean
+.PHONY: all build test clean fclean

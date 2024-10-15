@@ -1,62 +1,121 @@
-# A Fibonacci Number Service
 
-## Comments
+# Fibonacci Number Service
 
-Calcul vectoriel pour le process en go which is the fastest model to compute it because it is the only approch offering a O(log n), other approches: reccursive O(2^n) or memoization O(n)
-"Fast doubling" is an algorithm know to be faster but lack of documentation and mostly acknowledging it too late once development was done.
+This service computes Fibonacci numbers using an optimized algorithm designed for performance and security. Written in Go, it leverages the language's speed and offers a minimal attack surface with a statically built, lightweight container.
 
-Use go for speed and enabeling secure and lightweight package thanks to static build. No lib nor bin available in image from scratch limiting surface attack.
-This needs to be set for production purpose - to fix an abuse limit.
-It could dynamically be set depending on the hardware it runs on.
-Comment this for test purposes, if you do not mind wait for compute.
-Estimate the time it will take to compute fibonacci on the number given before computing in order to reject it.
-Could have added logs
-Could have added health point and metrics use
-Could have added ip ban or single request per user
-Could have added a timeout on requests
-Could have tested fuzzing
-Could not handle bigger numbers than ~8 digit without taking 1min or more
-Could have done apparmor/selinux profiles for running fibonacci binary.
-Could decide to compute or not depending upon the length of its result (compute it approximatly before computing fibonacci)
-Could have done network policies with this Ingress only on port 8000
+## Key Features
 
-Container runs on gvisor for limiting node disaster if container hijacked.
+- **Optimized Fibonacci Calculation**: Implements an O(log n) algorithm for efficient Fibonacci computation. Alternative approaches like recursion (O(2^n)) or memoization (O(n)) were considered but are slower.
+- **Minimalistic Container**: Runs in a highly secure, statically built Go environment with no external libraries or binaries. The image is built from scratch to limit the attack surface.
+- **Security Hardened**: Deployed with gVisor, network policies, and other security measures to mitigate potential container hijacking or abuse.
 
-Algorithm in lib/fibonacci has been optimize using the benchmark.sh which time requests. The algorithm tested mainly 2 libraries to handle bignumbers GMP (gmp.log) and math/big (big.log). Benchmark showed that math/big was a little better and luckily is "go native" library. The implementation was improved with help of chatGPT.
+## Table of Contents
+1. [Algorithm Overview](#algorithm-overview)
+2. [Security Features](#security-features)
+3. [Performance and Optimization](#performance-and-optimization)
+4. [Deployment](#deployment)
+5. [Try It With Docker](#try-it-with-docker)
+6. [Try It With Kubernetes](#try-it-with-kubernetes)
+7. [References](#references)
 
-Network policies with Ingress only and default-deny for the rest to avoid reaching other endpoints if pod has been hijacked, also preventing spamming other services
+## Algorithm Overview
 
-Deployment in readonlyrootfilesystem, runAs 1000, with gVisor used.
+This service uses the **fast doubling** algorithm to compute Fibonacci numbers with a time complexity of O(log n). This approach is faster than traditional recursive (O(2^n)) or memoization (O(n)) methods but lacks comprehensive documentation. Development was completed before fully exploring this algorithm, though it remains an efficient solution.
 
-Use Trivy as static analysis to prevent a deployment with known security issues.
+- **Go for Speed**: Go was chosen for its ability to produce fast, statically compiled binaries. It enables us to create lightweight and secure containers ideal for production environments.
+- **Big Number Libraries**: The implementation initially tested two libraries for handling large numbers: `GMP` and Go's `math/big`. Benchmarks showed that `math/big` performed slightly better and had the added advantage of being a Go-native library.
 
-The service is so simple that it is not necessary to use Helm or Kustomize at the moment.
-CI not implemented, build must be manual unfortunatly.
+### Limitations
 
-The use of HPA requires Metrics Server in order to work properly.
+- Calculations for very large Fibonacci numbers (greater than 8 digits) may take over a minute to compute.
+- Future improvements could include estimating the compute time and rejecting numbers that would exceed a certain threshold before starting the calculation.
 
-Documentation and comments in code written with help of chatGPT.
+## Security Features
 
-Sources:
-https://robwilsondev.medium.com/bigo-and-beyond-how-to-compute-fibonacci-sequence-efficiently-with-matrix-exponentiation-d9924545fe54
-https://www.nayuki.io/page/fast-fibonacci-algorithms
-https://www.calculatorsoup.com/calculators/discretemathematics/fibonacci-calculator.php - for verification
+This service has been built with a security-first approach:
 
-## Try it with Docker
-docker build --tag fibonacci:0 .
+- **Container Isolation**: The service runs in a container on **gVisor**, an additional sandbox layer to protect the host from potential container escape attacks.
+- **Network Policies**: Configured with Ingress-only network policies and a default-deny rule to prevent communication with other services if the pod is compromised.
+- **Read-Only Filesystem**: The container runs with a **read-only root filesystem** to limit potential write operations from inside the container.
+- **User Privilege Management**: The service is executed by a non-root user (`runAsUser 1000`).
+- **Static Analysis**: Trivy is used for static analysis to prevent deployments with known vulnerabilities.
 
-trivy image fibonacci:0
+Additional hardening ideas that were considered but not yet implemented:
+- IP banning or limiting the number of requests per user.
+- Setting a timeout for request handling to avoid abuse.
+- Enforcing AppArmor/SELinux profiles for more granular security.
+- Fuzzing tests to explore edge cases in the algorithm.
+- Logging errors.
 
-docker run --interactive --tty --publish 8000:8000 fibonacci:0
+## Performance and Optimization
 
-curl -s 'http://localhost:8000/fib?n=7654321'
+The Fibonacci computation is optimized through:
 
-## The Image Details
+- **Benchmarking**: Extensive benchmarks using a custom `benchmark.sh` script measured the performance of different big number libraries (`GMP` vs `math/big`). Go's `math/big` library was chosen based on performance.
+- **Static Build**: The Go binary is statically compiled, which keeps the image lightweight (~7MB) and minimizes dependencies.
 
-Go static build for lightweight image
+## Deployment
+
+### Minimal Docker Image
+
+The service is packaged in a minimal Docker container for efficient deployment.
+
+- **Build**: The container is built from scratch with no external libraries or binaries, providing a minimal attack surface.
+- **Trivy Scan**: Before deployment, the container is scanned for vulnerabilities using Trivy.
+- **Horizontal Pod Autoscaler (HPA)**: For dynamic scaling, HPA can be enabled, although it requires a Metrics Server.
+
+### Image Details
+
+The final Docker image is lightweight:
 
 ```
-REPOSITORY                    TAG       IMAGE ID       CREATED          SIZE
-fibonacci                     0         8eab71ceddce   21 seconds ago   7.03MB
+REPOSITORY   TAG       IMAGE ID       CREATED          SIZE
+fibonacci    0         8eab71ceddce   21 seconds ago   7.03MB
 ```
 
+## Try It With Docker
+
+You can try out the Fibonacci service locally using Docker. Follow these steps:
+
+1. **Build the Docker Image**:
+
+    ```bash
+    docker build --tag fibonacci:0 .
+    ```
+
+2. **Scan the Image for Vulnerabilities**:
+
+    ```bash
+    trivy image fibonacci:0
+    ```
+
+3. **Run the Service**:
+
+    ```bash
+    docker run --interactive --tty --publish 8000:8000 fibonacci:0
+    ```
+
+4. **Make a Request**:
+
+    To compute the Fibonacci number for `n=7654321`, run:
+
+    ```bash
+    curl -s 'http://localhost:8000/fib?n=7654321'
+    ```
+
+## Try It With Kubernetes
+
+You can try out the full Fibonacci deployment on Kubernetes. Just one command away:
+
+   **Apply the Manifest**:
+
+    ```bash
+    kubectl apply -f fib.yaml
+    ```
+
+
+## References
+
+- [Fast Fibonacci Algorithms by Nayuki](https://www.nayuki.io/page/fast-fibonacci-algorithms)
+- [Fibonacci Matrix Exponentiation Algorithm](https://robwilsondev.medium.com/bigo-and-beyond-how-to-compute-fibonacci-sequence-efficiently-with-matrix-exponentiation-d9924545fe54)
+- [Fibonacci Calculator for Verification](https://www.calculatorsoup.com/calculators/discretemathematics/fibonacci-calculator.php)

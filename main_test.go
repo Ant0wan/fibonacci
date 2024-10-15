@@ -101,4 +101,3 @@ func TestFibHandlerSpammingInvalidInputs(t *testing.T) {
 
 	wg.Wait()
 }
-
