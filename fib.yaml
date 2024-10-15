@@ -40,4 +40,20 @@ spec:
           allowPrivilegeEscalation: false
           runAsNonRoot: true
           readOnlyRootFilesystem: true
-
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: fibonacci
+  namespace: fibonacci
+spec:
+  podSelector: {}
+  policyTypes:
+  - Egress
+  - Ingress
+  egress:
+  - {}
+  ingress:
+  - ports:
+    - protocols: TCP
+      port: 8000
